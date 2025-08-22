@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.secrets
+
+user_base.csv
+user_base.R
+*.RData
+*.rds
+*.xlsx
