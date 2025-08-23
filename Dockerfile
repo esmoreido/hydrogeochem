@@ -7,3 +7,6 @@ COPY renv.lock renv.lock
 RUN R -e "renv::restore()"
 COPY . /hydrogeochem
 
+EXPOSE 8180
+
+CMD Rscript /hydrogeochem/app.R
