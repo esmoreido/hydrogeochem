@@ -15,3 +15,13 @@ sudo docker build -t hydrogeochem .
 ```shell
 sudo docker run -p 8180:8180 hydrogeochem
 ```
+
+5. Убить образ:
+```shell
+# Определить ID
+sudo docker ps
+#> CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                                                   NAMES
+#> f070850440df   hydrogeochem   "/bin/sh -c 'Rscript…"   51 seconds ago   Up 50 seconds   3838/tcp, 0.0.0.0:8180->8180/tcp, [::]:8180->8180/tcp   reverent_sinoussi
+
+sudo docker stop f070850440df
+```

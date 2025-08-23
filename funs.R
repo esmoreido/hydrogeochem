@@ -101,7 +101,7 @@ get_variable_list_ui <- function(chem_df) {
 # форматирование даты для dygraphs
 jsValueFormatter <- function() {
   f <- "function(ms) {
-          var today  = new lubridate::Date(ms);
+          var today  = new Date(ms);
           var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
           return(today.toLocaleDateString(\"ru-RU\", options));
    }"
