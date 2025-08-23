@@ -364,7 +364,7 @@ server <- function(input, output, session) {
                 label = "Дата",
                 valueFormatter = jsValueFormatter(),
                 rangePad = 5
-              ) |>
+              ) %>%
               dygraphs::dyAxis("y", drawGrid = FALSE) %>%
               dygraphs::dyOptions(colors = RColorBrewer::brewer.pal(3, "Set2"))
           })
