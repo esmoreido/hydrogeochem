@@ -1,4 +1,4 @@
-# Sys.setlocale("LC_ALL")
+Sys.setlocale("LC_ALL")
 library(shiny)
 library(shinyjs)
 library(shinydashboard)
