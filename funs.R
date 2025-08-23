@@ -1,4 +1,4 @@
-Sys.setlocale("LC_ALL")
+# Sys.setlocale("LC_ALL")
 library(ggplot2)
 library(tidyverse)
 library(googlesheets4)
@@ -110,6 +110,6 @@ jsValueFormatter <- function() {
 
 # БД пользователей
 user_base <- utils::read.csv(
-  'user_base.csv',
+  here::here('user_base.csv'),
   colClasses = c(rep('character', 4))
 )

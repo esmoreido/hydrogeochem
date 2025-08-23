@@ -1,4 +1,4 @@
-Sys.setlocale("LC_ALL")
+# Sys.setlocale("LC_ALL")
 library(shiny)
 library(shinyjs)
 library(shinydashboard)
@@ -14,8 +14,9 @@ library(plotly)
 library(dygraphs)
 library(readxl)
 library(xts)
-source('funs.R')
-gs4_auth(cache = ".secrets", email = "hgc.msu@gmail.com")
+library(here)
+source(here::here('funs.R'))
+gs4_auth(cache = here::here(".secrets"), email = "hgc.msu@gmail.com")
 
 options(shiny.trace = FALSE)
 options(shiny.fullstacktrace = FALSE)
@@ -406,4 +407,8 @@ server <- function(input, output, session) {
 }
 
 # Run the application
-shiny::shinyApp(ui = ui, server = server)
+shiny::shinyApp(
+  ui = ui,
+  server = server,
+  options = list("port" = 8180, "host" = "0.0.0.0")
+)
