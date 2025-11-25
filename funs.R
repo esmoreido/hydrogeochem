@@ -24,7 +24,7 @@ station_graph <- function(dataset, sheet_name){
   #     theme(legend.position = 'none')
   #   )
   print('here')
-  print(head(df))
+  # print(head(df))
   plot_ly(df, x = ~`Дата отбора`, y = ~`t воздуха`, name = 'Т воздуха', 
           type = 'scatter', mode = 'lines+markers', 
           line = list(color = 'orange'), marker = list(color='orange')) %>%
