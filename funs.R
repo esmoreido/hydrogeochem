@@ -8,7 +8,7 @@ library(lubridate)
 # график с одной станции
 station_graph <- function(dataset, sheet_name){
   # sheet_name <- sn[2]
-  # df <- read_sheet(url, sheet = sheet_name)
+  df <- gs[sn[1]]
   df <- dataset[sheet_name][[1]]
   # ggplotly(
   #   df %>%
@@ -23,7 +23,7 @@ station_graph <- function(dataset, sheet_name){
   #     theme_light(base_size = 14) +
   #     theme(legend.position = 'none')
   #   )
-  print('here')
+  # print('here')
   # print(head(df))
   plot_ly(df, x = ~`Дата отбора`, y = ~`t воздуха`, name = 'Т воздуха', 
           type = 'scatter', mode = 'lines+markers', 
@@ -42,7 +42,7 @@ station_table <- function(dataset, sheet_name){
 # получение из таблицы анализов МГУ списка станций и рендер в дропдаун ----
 get_station_list_ui <- function(chem_df) {
   renderUI({
-    st_choice <- as.list(unique(chem_df$`Station id`))
+    st_choice <- as.list(unique(chem_df$`Station ID`))
     # names(st_choice) <- st_list$name
     pickerInput(
       inputId = 'ui_stations_msu',

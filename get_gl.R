@@ -11,3 +11,11 @@ sn <- sheet_names(url)
 gs <- lapply(sn, read_sheet, ss = url, na = c('-'))
 names(gs) <- sn
 saveRDS(gs, file = 'google_data.rds')
+
+# main url ----
+chem_url <- 'https://docs.google.com/spreadsheets/d/17k9IPX2mfQPlFsUhKmW5NxZnQ-V-pndhvNXn946iQqM'
+chem_sn <- sheet_names(chem_url)
+
+# все данные в один список
+chem_gs <- lapply("Сводная итог", read_sheet, ss = chem_url, na = c('-'))
+saveRDS(chem_gs, file = 'chem_data.rds')

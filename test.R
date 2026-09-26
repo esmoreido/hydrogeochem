@@ -5,6 +5,8 @@ library(googlesheets4)
 library(plotly)
 library(lubridate)
 library(readxl)
+library(xts)
+library(dygraphs)
 # authenticate once with email ----
 # options(gargle_oauth_cache = ".secrets")
 # Authenticate manually
@@ -66,12 +68,13 @@ station_graph(sn[1])
 # карта с расположением точек отбора
 
 # файл из нашей лаборатории
-chem_df <- read_xlsx('Мониторинг-лаборатория.xlsx')
+# chem_df <- read_xlsx('Мониторинг-лаборатория.xlsx')
+chem_df <- data.frame(readRDS('chem_data.rds'), check.names = F)
 chem_df <- chem_df %>%
-  pivot_longer(!c(Date, `Station id`), names_to = 'var', values_to = 'val')
+  pivot_longer(!c(Date, `Station ID`), names_to = 'var', values_to = 'val')
 
 # график
-ts <- as.xts(chem_df[,-1], order.by = chem_df$Date)
+ts <- as.xts(chem_df, order.by = chem_df$Date)
 dygraph(ts, main = colnames(ts), 
                                        group = 'plots', 
                                        width = 'auto', 
