@@ -19,3 +19,4 @@ chem_sn <- sheet_names(chem_url)
 # все данные в один список
 chem_gs <- lapply("Сводная итог", read_sheet, ss = chem_url, na = c('-'))
 saveRDS(chem_gs, file = 'chem_data.rds')
+

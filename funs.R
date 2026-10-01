@@ -8,7 +8,7 @@ library(lubridate)
 # график с одной станции
 station_graph <- function(dataset, sheet_name){
   # sheet_name <- sn[2]
-  df <- gs[sn[1]]
+  # df <- gs[sn[1]]
   df <- dataset[sheet_name][[1]]
   # ggplotly(
   #   df %>%
