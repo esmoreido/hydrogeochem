@@ -1,0 +1,23 @@
+# VCS / IDE / history
+.git
+.gitignore
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.bat
+Dockerfile
+.dockerignore
+
+# scratch, not loaded by app.R or funs.R
+test.R
+
+# ---------------------------------------------------------------------------
+# DO NOT list these -- .gitignore hides them from git, but a Dockerfile COPY
+# does not read .gitignore. The image needs every one of them:
+#
+#   .secrets/          gargle OAuth token (refresh_token present -> headless)
+#   google_data.rds    monitoring data, read at app.R:154
+#   chem_data.rds      MSU lab data, read at app.R:157 AND written at :147
+#   user_base.csv      shinyauthr credentials, read at funs.R:98
+# ---------------------------------------------------------------------------
