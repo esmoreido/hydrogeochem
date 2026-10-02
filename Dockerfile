@@ -13,8 +13,22 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends libsodium-dev libssl-dev \
  && rm -rf /var/lib/apt/lists/*
 
-# Listen on 8180 (shiny-server default is 3838).
-RUN sed -i 's/listen 3838;/listen 8180;/' /etc/shiny-server/shiny-server.conf
+# Port 8180 (stock is 3838) and the app served at the ROOT url.
+#
+# Stock config uses site_dir /srv/shiny-server, which publishes each app in
+# that tree at its own subpath -> /hydrogeochem/. Switching to app_dir pins a
+# single app to the base URL, which is what the previous Rscript-based
+# deployment did, so http://HOST:8180/ keeps working.
+#
+# The trailing grep turns a non-matching sed into a failed build instead of a
+# silent fall-back to the old URL.
+RUN sed -i \
+      -e 's|listen 3838;|listen 8180;|' \
+      -e 's|site_dir /srv/shiny-server/\?;|app_dir /srv/shiny-server/hydrogeochem;|' \
+      -e 's|directory_index on;|directory_index off;|' \
+      /etc/shiny-server/shiny-server.conf \
+ && grep -q 'listen 8180;' /etc/shiny-server/shiny-server.conf \
+ && grep -q 'app_dir /srv/shiny-server/hydrogeochem;' /etc/shiny-server/shiny-server.conf
 
 # R packages, via plain install.packages(). Installed BEFORE COPY so editing
 # app.R doesn't rebuild this layer.
