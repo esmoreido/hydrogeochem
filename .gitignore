@@ -10,3 +10,4 @@ user_base.R
 *.rds
 *.xlsx
 *.bat
+*.tar.gz
