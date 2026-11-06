@@ -267,10 +267,10 @@ server <- function(input, output, session) {
     df <- chem_df %>%
       filter(`Station ID` %in% input$ui_stations_msu & 
                var %in% input$ui_variables_msu) %>%
-      pivot_wider(id_cols = Date,  
-                  names_from = c('Station ID', 'var'), names_sep = ' : ', 
-                  values_from = 'val') %>%
-      mutate(across(where(is.numeric), round, 3))
+      # pivot_wider(id_cols = Date,  
+      #             names_from = c('Station ID', 'var'), names_sep = ' : ', 
+      #             values_from = 'val') %>%
+      mutate(across(where(is.numeric), \(x) round(x, digits = 3)))
   })
   
   # График анализа лаборатории МГУ ----
@@ -297,108 +297,109 @@ server <- function(input, output, session) {
   observeEvent(input$plot_graph, {
     req(credentials()$user_auth)
     # график старая версия ---- 
-    output$plotdata <- renderUI({
-      withProgress(expr = {
-        ts <- as.xts(plot_df()[,-1],
-                     order.by = plot_df()$Date)
-        lst <- lapply(ts, function (x) dygraph(x, main = colnames(x),
-                                               group = 'plots',
-                                               width = 'auto',
-                                               height = 200) %>%
-                        dyRangeSelector() %>%
-                        dyAxis("x", label = "Дата",
-                               valueFormatter = jsValueFormatter(),
-                               rangePad=5) |>
-                        dyAxis("y", drawGrid = FALSE) %>%
-                        dyOptions(colors = RColorBrewer::brewer.pal(3, "Set2")))
-        # print(lst)
-        res <- htmltools::tagList(lst)
-        return(res)
-      }, message = "Загрузка...")
-    })
+    # output$plotdata <- renderUI({
+    #   withProgress(expr = {
+    #     ts <- as.xts(plot_df()[,-1],
+    #                  order.by = plot_df()$Date)
+    #     lst <- lapply(ts, function (x) dygraph(x, main = colnames(x),
+    #                                            group = 'plots',
+    #                                            width = 'auto',
+    #                                            height = 200) %>%
+    #                     dyRangeSelector() %>%
+    #                     dyAxis("x", label = "Дата",
+    #                            valueFormatter = jsValueFormatter(),
+    #                            rangePad=5) |>
+    #                     dyAxis("y", drawGrid = FALSE) %>%
+    #                     dyOptions(colors = RColorBrewer::brewer.pal(3, "Set2")))
+    #     # print(lst)
+    #     res <- htmltools::tagList(lst)
+    #     return(res)
+    #   }, message = "Загрузка...")
+    # })
     
     
     
     # график новая версия ----
-    # output$plotdata <- renderUI({
-    #   withProgress(message = "Построение графиков...", value = 0, {
-    #     ts <- as.xts(plot_df()[,-1], 
-    #                  order.by = plot_df()$Date)
-    #     if(is.null(ts) || nrow(ts) == 0) {
-    #       return(div("Нет данных для отображения", style = "color:red; padding:20px;"))
-    #     }
-    #     
-    #     # Создаем отдельный график для каждого показателя
-    #     plot_list <- lapply(input$pick_var, function(current_var) {
-    #       # Фильтруем данные по текущему показателю
-    #       var_data <- df %>% 
-    #         filter(value_type == current_var) %>%
-    #         filter(name_station %in% input$ui_stations)
-    #       
-    #       if(nrow(var_data) == 0) return(NULL)
-    #       
-    #       # Создаем временной ряд для каждой станции
-    #       station_data <- lapply(input$ui_stations, function(station) {
-    #         station_df <- var_data %>% 
-    #           filter(name_station == station) %>%
-    #           select(datetime, value)
-    #         
-    #         if(nrow(station_df) > 0) {
-    #           ts <- xts::as.xts(station_df$value, order.by = station_df$datetime)
-    #           colnames(ts) <- station
-    #           return(ts)
-    #         }
-    #         return(NULL)
-    #       })
-    #       
-    #       # Удаляем NULL элементы
-    #       station_data <- station_data[!sapply(station_data, is.null)]
-    #       
-    #       if(length(station_data) == 0) return(NULL)
-    #       
-    #       # Объединяем все станции для текущего показателя
-    #       combined_ts <- do.call(cbind, station_data)
-    #       
-    #       # Генерируем уникальные цвета для станций
-    #       colors <- RColorBrewer::brewer.pal(max(3, length(station_data)), "Set1")[1:length(station_data)]
-    #       
-    #       incProgress(1/length(input$pick_var), 
-    #                   detail = paste("Показатель:", current_var))
-    #       
-    #       # Строим график
-    #       dygraph(combined_ts, main = current_var, width = '100%') %>%
-    #         dyRangeSelector() %>%
-    #         dyAxis("x", label = "Дата") %>%
-    #         dyAxis("y", label = current_var) %>%
-    #         dyOptions(
-    #           colors = colors,
-    #           drawPoints = TRUE,
-    #           pointSize = 3,
-    #           strokeWidth = 2,
-    #           connectSeparatedPoints = TRUE
-    #         ) %>%
-    #         dyLegend(
-    #           show = "always",
-    #           hideOnMouseOut = FALSE,
-    #           labelsSeparateLines = TRUE
-    #         ) %>%
-    #         dyHighlight(
-    #           highlightCircleSize = 4,
-    #           highlightSeriesBackgroundAlpha = 0.2,
-    #           hideOnMouseOut = TRUE
-    #         )
-    #     })
-    #     
-    #     # Удаляем NULL элементы
-    #     plot_list <- plot_list[!sapply(plot_list, is.null)]
-    #     
-    #     if(length(plot_list) == 0) {
-    #       return(div("Нет данных для построения графиков", style = "color:red; padding:20px;"))
-    #     }
-    #     
-    #     htmltools::tagList(plot_list)
-    #   })
-    # })
+    output$plotdata <- renderUI({
+      withProgress(message = "Построение графиков...", value = 0, {
+        df <- plot_df()
+        
+        if(is.null(df) || nrow(df) == 0) {
+          return(div("Нет данных для отображения", style = "color:red; padding:20px;"))
+        }
+
+        # Создаем отдельный график для каждого показателя
+        plot_list <- lapply(input$ui_variables_msu, function(current_var) {
+          # Фильтруем данные по текущему показателю
+          var_data <- df %>%
+            filter(var == current_var) %>%
+            filter(`Station ID` %in% input$ui_stations_msu)
+          
+          if(nrow(var_data) == 0) return(NULL)
+
+          # Создаем временной ряд для каждой станции
+          station_data <- lapply(input$ui_stations_msu, function(station) {
+            station_df <- var_data %>%
+              filter(`Station ID` == station) %>%
+              select(Date, val)
+            
+            if(nrow(station_df) > 0) {
+              ts <- xts::as.xts(station_df$val, order.by = station_df$Date)
+              colnames(ts) <- station
+              
+              return(ts)
+            }
+            return(NULL)
+          })
+
+          # Удаляем NULL элементы
+          station_data <- station_data[!sapply(station_data, is.null)]
+
+          if(length(station_data) == 0) return(NULL)
+
+          # Объединяем все станции для текущего показателя
+          combined_ts <- do.call(cbind, station_data)
+
+          # Генерируем уникальные цвета для станций
+          colors <- RColorBrewer::brewer.pal(max(3, length(station_data)), "Set1")[1:length(station_data)]
+
+          incProgress(1/length(input$pick_var),
+                      detail = paste("Показатель:", current_var))
+
+          # Строим график
+          dygraph(combined_ts, main = current_var, width = '100%') %>%
+            dyRangeSelector() %>%
+            dyAxis("x", label = "Дата") %>%
+            dyAxis("y", label = current_var) %>%
+            dyOptions(
+              colors = colors,
+              drawPoints = TRUE,
+              pointSize = 3,
+              strokeWidth = 2,
+              connectSeparatedPoints = TRUE
+            ) %>%
+            dyLegend(
+              show = "always",
+              hideOnMouseOut = FALSE,
+              labelsSeparateLines = TRUE
+            ) %>%
+            dyHighlight(
+              highlightCircleSize = 4,
+              highlightSeriesBackgroundAlpha = 0.2,
+              hideOnMouseOut = TRUE
+            )
+        })
+        print(head(plot_list))
+        # Удаляем NULL элементы
+        plot_list <- plot_list[!sapply(plot_list, is.null)]
+        print(head(plot_list))
+        if(length(plot_list) == 0) {
+          return(div("Нет данных для построения графиков", style = "color:red; padding:20px;"))
+        }
+
+        htmltools::tagList(plot_list)
+      })
+    })
     
     # Вывод ----
     output$datatable <- renderDT(
