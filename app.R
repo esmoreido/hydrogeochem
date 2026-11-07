@@ -24,19 +24,20 @@ stl <- "display:inline-block; vertical-align:top"
 btn <- "margin-top:25px"
 ui <- dashboardPage(skin = 'black', 
                     dashboardHeader(title = "Мониторинг ПТЭиС",
-                                    # кнопка обновления
-                                    
-                                    # кнопка выхода пользователя
+#                                     хэдер ----
                                     tags$li(class = "dropdown", style = "padding-top: 15px; padding-right: 15px; 
                                   padding-bottom: 15px; color: #fff;", 
                                             div(class = "pull-right", 
+                                                # кнопка обновления ----
                                                 uiOutput("header_loadData_btn", 
                                                          inline = TRUE),
+                                                # кнопка выхода пользователя ----
                                                 logoutUI(id = "logout", 
                                                          label = "Выход", 
                                                          icon = NULL, 
                                                          class = "btn-danger",
                                                          style = "color: white;")))),
+#                     меню ----
                     dashboardSidebar(collapsed = T,
                       sidebarMenu(
                         menuItem("Обзор", tabName = "dashboard", icon = icon("map-location-dot")), # fontawesome.com
@@ -389,7 +390,7 @@ server <- function(input, output, session) {
               hideOnMouseOut = TRUE
             )
         })
-        print(head(plot_list))
+        # print(head(plot_list))
         # Удаляем NULL элементы
         plot_list <- plot_list[!sapply(plot_list, is.null)]
         print(head(plot_list))

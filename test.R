@@ -73,7 +73,7 @@ chem_df <- data.frame(readRDS('chem_data.rds'), check.names = F)
 chem_df <- chem_df %>%
   pivot_longer(!c(Date, `Station ID`), names_to = 'var', values_to = 'val')
 
-# график
+# график анализов
 ts <- as.xts(chem_df, order.by = chem_df$Date)
 dygraph(ts, main = colnames(ts), 
                                        group = 'plots', 
@@ -83,23 +83,13 @@ dygraph(ts, main = colnames(ts),
                 dyAxis("x", label = "Дата") |>
                 dyAxis("y", drawGrid = FALSE)
 
-
-# объединение мониторинга и анализа
-readRDS('icp_data.rds')
-# створ отбора по его ID
-get_sample_attr <- function(sample_id){
-  # sample_id <- '10072024Обь'
-  search_list <- gs
-  # print(sample_id)
-  filtered_list <- lapply(search_list, function(df) {df[which(df$`Проба` == sample_id), , drop = FALSE]})
-  filtered_list <- filtered_list[sapply(filtered_list, nrow) > 0]
-  gs[names(filtered_list)]
-  attr <- gsub("^[0-9]. ", "", names(filtered_list))
-}
-
-df <- Reduce(function(x, y) left_join(x, y, 
-                                      by = c('Название пробы' = 'Проба', 
-                                             'Дата отбора' = 'Дата отбора'), 
-                                      suffix = c('_sus', '_dis')), icp_gs)
-df <- df %>%
-  pivot_longer(cols = !contains(" "))
+# график ICP
+icp_df <- readRDS('icp_data.rds')
+ts_icp <- as.xts(icp_df, order.by = icp_df$sample_date)
+dygraph(ts_icp, main = colnames(ts_icp), 
+        group = 'plots', 
+        width = 'auto', 
+        height = 200) %>% 
+  dyRangeSelector() %>%
+  dyAxis("x", label = "Дата") |>
+  dyAxis("y", drawGrid = FALSE)
