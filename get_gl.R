@@ -9,7 +9,9 @@ sn <- sheet_names(url)
 
 # все данные в один список
 gs <- lapply(sn, read_sheet, ss = url, na = c('-'))
-names(gs) <- sn
+names(gs) <- sn 
+# добавляем колонку с названием станции
+gs <- Map(cbind, gs, station = gsub("^[0-9]. ", "", names(gs)))
 saveRDS(gs, file = 'google_data.rds')
 
 # main url ----
@@ -20,3 +22,9 @@ chem_sn <- sheet_names(chem_url)
 chem_gs <- lapply("Сводная итог", read_sheet, ss = chem_url, na = c('-'))
 saveRDS(chem_gs, file = 'chem_data.rds')
 
+# данные ICP вместе взвесь и раствор
+icp_sheets <- sheet_names(chem_url)[2:3]
+icp_sheets
+icp_gs <- lapply(icp_sheets, read_sheet, ss = chem_url, na = c('-'))
+names(icp_gs) <- c('sus', 'dis')
+saveRDS(icp_gs, file = 'icp_data.rds')
