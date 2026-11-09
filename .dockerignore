@@ -8,9 +8,15 @@
 *.bat
 Dockerfile
 .dockerignore
+Makefile
 
 # scratch, not loaded by app.R or funs.R
 test.R
+
+# image archives / build artifacts: never part of the app
+*.tar
+*.tar.gz
+*.tgz
 
 # ---------------------------------------------------------------------------
 # DO NOT list these -- .gitignore hides them from git, but a Dockerfile COPY
